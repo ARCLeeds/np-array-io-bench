@@ -623,8 +623,8 @@ if __name__ == '__main__':
 	parser.add_argument('--no-browser', action='store_true', help='Do not launch a browser tab to display the results.')
 	parser.add_argument('--save-html-file', action='store', metavar='FILE',  help='If desired, provide filename so that html report gets saved to it.')
 	parser.add_argument('--standalone-html', action='store_true', 
-					help='By default the html will reference generated png files for the figures. '
-					'But if desired this option can encode the pngs directly in the html (making it larger but standalone).')
+					help='By default the html will reference generated svg files for the figures. '
+					'But if desired this option can encode the svgs directly in the html (making it larger but standalone).')
 	parser.add_argument('--notebook', action='store_true', help='Plot results in Jupyter Notebook.')
 
 	args = parser.parse_args()
@@ -763,10 +763,10 @@ if __name__ == '__main__':
 
 		def fig_to_html_str(fig):
 			img = BytesIO()
-			fig.savefig(img, format='png', bbox_inches='tight', dpi=72.0)
+			fig.savefig(img, format='svg', bbox_inches='tight', dpi=72.0)
 			img.seek(0)
 			s = base64.b64encode(img.getvalue()).decode('utf-8')
-			html_str = f'<img src="data:image/png;base64, {s}">'
+			html_str = f'<img src="data:image/svg+xml;base64, {s}">'
 			return html_str
 
 		#TODO switch to use mpld3 in the future when it becomes capable of showing figures with the same quality
@@ -795,9 +795,9 @@ if __name__ == '__main__':
 			if not args.standalone_html:
 				html_str = ''
 				for i,fig in enumerate(figs):
-					png_filename = f'{out_fileprefix}_{i+1}.png'
-					html_str += f'<img src="{png_filename}"/>\n'
-					fig.savefig(os.path.join(root,png_filename), dpi=72.0)
+					svg_filename = f'{out_fileprefix}_{i+1}.svg'
+					html_str += f'<img src="{svg_filename}"/>\n'
+					fig.savefig(os.path.join(root,svg_filename), dpi=72.0)
 				html_str += html_run_info_str(libinfo,sysinfo,cmd_str)
 
 			print(f'Saving report to {out_filepath}.')
